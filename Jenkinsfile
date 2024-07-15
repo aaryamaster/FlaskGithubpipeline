@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/demo-flask-app"
+        DOCKER_IMAGE = "aaryamaster/jenkins-pipeline"
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/SOWMYAganuga/PythonFlaskApp.git'
+                git 'https://github.com/aaryamaster/jenkinspipeline.git'
             }
         }
         stage('Build Docker Image') {
