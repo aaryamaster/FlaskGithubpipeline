@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/aaryamaster/jenkinspipeline.git' // Replace with your Git repository URL
+                git branch: 'main', credentialsId: '5db5dac7-22bd-4d53-96a6-3944780c6c2a', url: 'https://github.com/aaryamaster/jenkinspipeline.git'
             }
         }
         stage('Build Docker Image') {
