@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "aaryamaster/jenkins-pipeline"
+        DOCKER_IMAGE = "aariamaster/jenkins-pipeline" // Replace with your Docker image name
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/aaryamaster/jenkinspipeline.git'
+                git 'https://github.com/aaryamaster/jenkinspipeline.git' // Replace with your Git repository URL
             }
         }
         stage('Build Docker Image') {
@@ -27,20 +27,12 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE).push()
                     }
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    // Add your deployment steps here, e.g., deploying to a server or Kubernetes cluster
-                    sh 'echo "Deploying to server..."'
                 }
             }
         }
