@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "aariamaster/jenkins-pipeline" // Replace with your Docker image name
+        DOCKER_PATH = "/usr/local/bin/docker" // Replace with the actual path to the Docker executable
     }
 
     stages {
@@ -14,24 +15,23 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(DOCKER_IMAGE)
+                    sh "${DOCKER_PATH} build -t ${DOCKER_IMAGE} ."
                 }
             }
         }
         stage('Run Tests') {
             steps {
                 script {
-                    docker.image(DOCKER_IMAGE).inside {
-                        sh 'pytest'
-                    }
+                    sh "${DOCKER_PATH} run --rm ${DOCKER_IMAGE} pytest"
                 }
             }
         }
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', '6002f46a-c471-4c17-b02b-551f37c97e6f') {
-                        docker.image(DOCKER_IMAGE).push()
+                    withCredentials([string(credentialsId: '6002f46a-c471-4c17-b02b-551f37c97e6f', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+                        sh "${DOCKER_PATH} login -u <aaryamaster> -p ${DOCKER_HUB_CREDENTIALS}"
+                        sh "${DOCKER_PATH} push ${DOCKER_IMAGE}"
                     }
                 }
             }
@@ -44,3 +44,4 @@ pipeline {
         }
     }
 }
+
