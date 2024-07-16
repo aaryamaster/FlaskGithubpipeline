@@ -14,21 +14,15 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerHome = tool name: 'Docker', type: 'com.cloudbees.jenkins.plugins.docker_tools.DockerTool'
-                    dockerHome.withDockerTool {
-                        docker.build(DOCKER_IMAGE)
-                    }
+                    docker.build(DOCKER_IMAGE)
                 }
             }
         }
         stage('Run Tests') {
             steps {
                 script {
-                    def dockerHome = tool name: 'Docker', type: 'com.cloudbees.jenkins.plugins.docker_tools.DockerTool'
-                    dockerHome.withDockerTool {
-                        docker.image(DOCKER_IMAGE).inside {
-                            sh 'pytest'
-                        }
+                    docker.image(DOCKER_IMAGE).inside {
+                        sh 'pytest'
                     }
                 }
             }
@@ -36,11 +30,8 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    def dockerHome = tool name: 'Docker', type: 'com.cloudbees.jenkins.plugins.docker_tools.DockerTool'
-                    dockerHome.withDockerTool {
-                        docker.withRegistry('https://index.docker.io/v1/', '6002f46a-c471-4c17-b02b-551f37c97e6f') {
-                            docker.image(DOCKER_IMAGE).push()
-                        }
+                    docker.withRegistry('https://index.docker.io/v1/', '6002f46a-c471-4c17-b02b-551f37c97e6f') {
+                        docker.image(DOCKER_IMAGE).push()
                     }
                 }
             }
