@@ -16,5 +16,6 @@ ENV PYTHONPATH="/usr/src/app/src:/usr/src/app/src/stubs:${PYTHONPATH}"
 # Display PYTHONPATH for debugging (optional)
 RUN echo $PYTHONPATH
 
-# Run the Flask application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+# Run tests using pytest
+CMD ["pytest", "--disable-warnings", "-v"]
+
