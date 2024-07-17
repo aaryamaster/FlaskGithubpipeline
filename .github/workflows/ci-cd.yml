@@ -40,10 +40,10 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t aaryamaster/flaskpipeline .
+        run: docker build -t aaryamaster/cda .
 
       - name: Push Docker image to Docker Hub
-        run: docker push aaryamaster/flaskpipeline
+        run: docker push aaryamaster/cda
 
       - name: Notify on failure
         if: ${{ github.event.workflow_run.conclusion == 'failure' }}
