@@ -33,14 +33,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Deploy to Docker Hub
-        if: ${{ github.event.workflow_run.conclusion == 'success' }}
-        uses: ./.github/workflows/deploy.yml
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
-          DOCKHUB_USERNAME: ${{ secrets.DOCKHUB_USERNAME }}
-          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          username: ${{ secrets.DOCKHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t aaryamaster/flaskpipeline .
+
+      - name: Push Docker image to Docker Hub
+        run: docker push aaryamaster/flaskpipeline
 
       - name: Notify on failure
         if: ${{ github.event.workflow_run.conclusion == 'failure' }}
         run: echo 'The triggering workflow failed'
-
