@@ -1,0 +1,37 @@
+name: Python CI with pytest
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          pip install -r .github/workflows/requirements.txt
+          pip install pytest
+
+      - name: Get directory
+        run: ls
+
+      - name: Run tests with pytest
+        run: pytest -v /Users/aaryamaster/Files/Software Eng Files/Software Studio/Demo/Jenkin Pipeline/test_app.py
+        
+      - name: Build Docker image
+        run: docker build -t aaryamaster/jenkins-pipeline .
+
+      - name: Run tests inside Docker container
+        run: docker run --rm aaryamaster/jenkins-pipeline pytest
