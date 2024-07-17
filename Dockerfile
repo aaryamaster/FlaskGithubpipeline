@@ -1,5 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM python
+FROM python:3.9-slim
 
 # Set environment variables
 ENV VIRTUAL_ENV=/opt/venv
@@ -24,3 +24,4 @@ COPY . /app
 
 # Command to run the application
 CMD ["python", "app.py"]
+
