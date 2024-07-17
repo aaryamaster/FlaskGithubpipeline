@@ -1,0 +1,55 @@
+# .github/workflows/ci-cd.yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and test
+        run: |
+          docker build -t ci-cd-docker-example .
+          docker run ci-cd-docker-example python -m unittest discover -s tests -p '*_test.py'
+
+      - name: Save test result
+        if: always()
+        run: echo "Tests passed" > test_result.txt
+
+      - name: Upload test result
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-result
+          path: test_result.txt
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download test result
+        uses: actions/download-artifact@v2
+        with:
+          name: test-result
+
+      - name: Read test result
+        run: cat test-result/test_result.txt
+
+      - name: Deploy to production
+        # Add your deployment steps here, e.g., push to a production environment
+        run: echo "Deployment steps go here"

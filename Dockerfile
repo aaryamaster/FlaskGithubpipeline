@@ -1,27 +1,20 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9-slim
-
-# Set environment variables
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# Use the official Python image from Docker Hub
+FROM python
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Copy the current directory contents into the container at /usr/src/app
+COPY . .
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN python -m venv $VIRTUAL_ENV && \
-    pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN pip install --verbose -r requirements.txt
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Set PYTHONPATH to include specific directories
+ENV PYTHONPATH="/usr/src/app/src:/usr/src/app/src/stubs:${PYTHONPATH}"
 
-# Command to run the application
-CMD ["python", "app.py"]
+# Display PYTHONPATH for debugging (optional)
+RUN echo $PYTHONPATH
 
+# Run the Flask application using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
