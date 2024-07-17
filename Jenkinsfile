@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "aaryamaster/jenkins-pipeline" // Replace with your Docker image name
         DOCKER_PATH = "/usr/local/bin/docker" // Replace with the actual path to the Docker executable
-        
+    }
 
     stages {
         stage('Clone Repository') {
