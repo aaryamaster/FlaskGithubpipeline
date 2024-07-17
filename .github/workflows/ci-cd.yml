@@ -24,17 +24,6 @@ jobs:
           docker build -t ci-cd-docker-example .
           docker run ci-cd-docker-example pytest --disable-warnings -v
 
-      - name: Save test result
-        if: always()
-        run: echo "Tests passed" > test_result.txt
-
-      - name: Upload test result
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-result
-          path: test_result.txt
-
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -43,14 +32,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Download test result
-        uses: actions/download-artifact@v2
-        with:
-          name: test-result
-
-      - name: Read test result
-        run: cat test-result/test_result.txt
 
       - name: Deploy to Docker Hub
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -62,3 +43,4 @@ jobs:
       - name: Notify on failure
         if: ${{ github.event.workflow_run.conclusion == 'failure' }}
         run: echo 'The triggering workflow failed'
+
