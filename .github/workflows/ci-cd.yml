@@ -20,7 +20,7 @@ jobs:
       - name: Build and test
         run: |
           docker build -t ci-cd-docker-example .
-          docker run ci-cd-docker-example python -m unittest discover -s tests -p '*_test.py'
+          docker run ci-cd-docker-example pytest --disable-warnings -v
 
       - name: Save test result
         if: always()
