@@ -1,4 +1,3 @@
-# .github/workflows/ci-cd.yaml
 name: CI/CD Pipeline
 
 on:
@@ -8,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+  workflow_run:
+    workflows: [Python CI with pytest]
+    types: [completed]
 
 jobs:
   test:
@@ -50,6 +52,13 @@ jobs:
       - name: Read test result
         run: cat test-result/test_result.txt
 
-      - name: Deploy to production
-        # Add your deployment steps here, e.g., push to a production environment
-        run: echo "Deployment steps go here"
+      - name: Deploy to Docker Hub
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        uses: ./.github/workflows/deploy.yml
+        with:
+          DOCKHUB_USERNAME: ${{ secrets.DOCKHUB_USERNAME }}
+          DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Notify on failure
+        if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+        run: echo 'The triggering workflow failed'
